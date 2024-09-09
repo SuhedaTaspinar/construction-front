@@ -1,33 +1,53 @@
-import { Contact } from "@/types/contact";
+"use client";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const contactData: Contact[] = [
-  {
-    number: "0530 234 67 06",
-    email: "elgskdfşlr@gmail.com",
-    instagram: "instagram_handle_1",
-    twitter: "twitter_handle_1",
-    youtube: "youtube_channel_1",
-    address: "123 Example St, City, Country",
-  },
-  {
-    number: "0530 234 67 06",
-    email: "elgskdfşlr@gmail.com",
-    instagram: "instagram_handle_2",
-    twitter: "twitter_handle_2",
-    youtube: "youtube_channel_2",
-    address: "456 Example St, City, Country",
-  },
-  {
-    number: "0530 234 67 06",
-    email: "elgskdfşlr@gmail.com",
-    instagram: "instagram_handle_3",
-    twitter: "twitter_handle_3",
-    youtube: "youtube_channel_3",
-    address: "789 Example St, City, Country",
-  },
-];
+interface Contact {
+  phone: String;
+  mail: String;
+  instagram: String;
+  twitter: String;
+  youtube: String;
+  address: String;
+}
 
-const TableThree = () => {
+const ContactTable: React.FC = () => {
+  const [contacts, setContact] = useState<Contact[]>([]);
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/contacts/get-contact", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          setContact(data); // Gelen veriler projelere atanıyor
+          setSuccess("Veriler başarıyla yüklendi");
+          setError("");
+        } else {
+          setError(data.message);
+          setSuccess("");
+        }
+      } catch (error) {
+        setError("Bir hata oluştu");
+        setSuccess("");
+      }
+    };
+
+    fetchData();
+  }, []); // Sadece ilk render'da çalışacak
+
+
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className="max-w-full overflow-x-auto">
@@ -56,25 +76,25 @@ const TableThree = () => {
             </tr>
           </thead>
           <tbody>
-            {contactData.map((contact, index) => (
+            {contacts.map((contacts, index) => (
               <tr key={index}>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contact.number}
+                  {contacts.phone}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contact.email}
+                  {contacts.mail}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contact.instagram}
+                  {contacts.instagram}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contact.twitter}
+                  {contacts.twitter}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contact.youtube}
+                  {contacts.youtube}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contact.address}
+                  {contacts.address}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
@@ -123,4 +143,4 @@ const TableThree = () => {
   );
 };
 
-export default TableThree;
+export default ContactTable;

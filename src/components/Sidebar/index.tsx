@@ -69,7 +69,7 @@ const menuGroups = [
         route: "#",
         children: [
           { label: "Proje Ekle", route: "/forms/admin/add-project-forms" },
-          { label: "Proje Listele", route: "/forms/admin/project-list" },
+          { label: "Proje Listele", route: "/forms/admin/project-table" },
         ],
       },
       {
