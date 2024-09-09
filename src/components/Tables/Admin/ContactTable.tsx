@@ -31,7 +31,7 @@ const ContactTable: React.FC = () => {
 
         const data = await response.json();
         if (response.ok) {
-          setContact(data); // Gelen veriler projelere atanıyor
+          setContact(data); 
           setSuccess("Veriler başarıyla yüklendi");
           setError("");
         } else {

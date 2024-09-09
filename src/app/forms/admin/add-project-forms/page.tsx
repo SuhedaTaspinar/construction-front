@@ -2,14 +2,11 @@
 
 import React, { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Project: React.FC = () => {
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [features, setfeatures] = useState("");
@@ -22,38 +19,35 @@ const Project: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    const formData = new FormData();
+    if (image) formData.append("image", image); 
+    formData.append("name", name);
+    formData.append("address", address);
+    formData.append("features", features);
+    formData.append("price", price);
+    formData.append("description", description);
+  
     try {
       const response = await fetch("http://localhost:5000/api/projects/create-project", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          image: image,
-          name:name,
-          address:address,
-          features:features,
-          price:price,
-          description:description
-        }),
+        body: formData,
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         setSuccess("Proje kaydı başarıyla tamamlandı.");
         setError("");
-
-        // Başarılı kayıt olduktan sonra signin sayfasına yönlendirme
         router.push("/forms/admin/project-table");
       } else {
         setError(data.message || "Kayıt başarısız.");
       }
     } catch (error) {
-      setError("An error occurred");
+      setError("Bir hata oluştu.");
     }
   };
+  
 
   return (
     <DefaultLayout>
@@ -61,7 +55,6 @@ const Project: React.FC = () => {
 
       <div className="">
         <div className="flex flex-col gap-9">
-          {/* <!-- Add Project Form --> */}
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <form onSubmit={handleSubmit}>
               <div className="p-6.5">
@@ -71,10 +64,12 @@ const Project: React.FC = () => {
                       Görsel Ekle
                     </label>
                     <input
-                      type="text" /////////////////bu sonra file olarak değiştirilecek
+                      type="file"
                       className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:px-5 file:py-3 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                      value={image}
-                      onChange={(e) => setImage(e.target.value)}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setImage(file);
+                      }}
                     />
                   </div>
 
@@ -124,7 +119,7 @@ const Project: React.FC = () => {
                       Fiyat
                     </label>
                     <input
-                      type="number."
+                      type="number"
                       placeholder="Fiyat giriniz."
                       className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={price}
@@ -158,6 +153,6 @@ const Project: React.FC = () => {
       </div>
     </DefaultLayout>
   );
-
 };
+
 export default Project;

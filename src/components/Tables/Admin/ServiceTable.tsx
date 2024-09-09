@@ -42,7 +42,7 @@ const ServiceTable: React.FC = () => {
     };
 
     fetchData();
-  }, []); // Sadece ilk render'da çalışacak
+  }, []);
 
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -66,9 +66,12 @@ const ServiceTable: React.FC = () => {
           <div className="col-span-2 flex items-center justify-start">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-18.75 w-20 rounded-md">
-              <p className="text-sm text-black dark:text-white">
-                {service.image}
-              </p>
+              <Image
+                src={`http://localhost:5000/uploads/${service.image}`}
+                width={60}
+                height={50}
+                alt="Product"
+              />
               </div>
               <p className="text-sm text-black dark:text-white">
                 {service.type}
@@ -77,7 +80,7 @@ const ServiceTable: React.FC = () => {
           </div>
           <div className="col-span-2 hidden items-center justify-start sm:flex">
             <p className="text-sm text-black dark:text-white">
-              {service.description} {/* `description` alanı düzeltildi */}
+              {service.description}
             </p>
           </div>
           <div className="col-span-3 flex items-center justify-end">

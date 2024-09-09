@@ -1,17 +1,58 @@
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+"use client";
 
-import { Metadata } from "next";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Next.js Form Layout | TailAdmin - Next.js Dashboard Template",
-  description:
-    "This is Next.js Form Layout page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
-};
+const Contact: React.FC = () => {
+  const [phone, setPhone] = useState("");
+  const [mail, setMail] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [youtube, setYoutube] = useState("");
+  const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-const FormLayout = () => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/contacts/create-contact", {
+        method: "POST",
+        headers: {  
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: phone,
+          mail:mail,
+          instagram:instagram,
+          twitter: twitter,
+          youtube:youtube,
+          address:address
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess("İletişim formu başarıyla tamamlandı.");
+        setError("");
+
+        router.push("/forms/admin/contact-table");
+      } else {
+        setError(data.message || "Kayıt başarısız.");
+      }
+    } catch (error) {
+      setError("An error occurred");
+    }
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="İletişim Formu" />
@@ -20,7 +61,7 @@ const FormLayout = () => {
         <div className="flex flex-col gap-9">
           {/* <!-- Contact Form --> */}
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <form action="#">
+            <form onSubmit={handleSubmit}>
               <div className="p-6.5">
                 <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
                   <div className="w-full xl:w-1/2">
@@ -31,6 +72,8 @@ const FormLayout = () => {
                       type="text"
                       placeholder="Telefon numarası giriniz."
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                     />
                   </div>
                 </div>
@@ -43,6 +86,8 @@ const FormLayout = () => {
                     type="email"
                     placeholder="e-mail adresi giriniz."
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    value={mail}
+                    onChange={(e) => setMail(e.target.value)}
                   />
                 </div>
 
@@ -54,6 +99,8 @@ const FormLayout = () => {
                     type="text"
                     placeholder="İnstagram adresi giriniz."
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
                   />
                 </div>
 
@@ -66,6 +113,8 @@ const FormLayout = () => {
                       type="text"
                       placeholder="Twitter adresi giriniz."
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      value={twitter}
+                      onChange={(e) => setTwitter(e.target.value)}
                     />
                   </div>
                 </div>
@@ -79,6 +128,8 @@ const FormLayout = () => {
                       type="text"
                       placeholder="Youtube adresi giriniz."
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      value={youtube}
+                      onChange={(e) => setYoutube(e.target.value)}
                     />
                   </div>
                 </div>
@@ -92,12 +143,16 @@ const FormLayout = () => {
                       rows={2}
                       placeholder="Adres giriniz."
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}                    
                     ></textarea>
                   </div>
                 </div>
 
-                <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                  Send Message
+                <button 
+                type="submit"
+                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                  İletişim Formunu Ekle
                 </button>
               </div>
             </form>
@@ -108,4 +163,4 @@ const FormLayout = () => {
   );
 };
 
-export default FormLayout;
+export default Contact;

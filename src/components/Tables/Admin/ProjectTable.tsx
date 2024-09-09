@@ -78,7 +78,12 @@ const ProjectTable: React.FC = () => {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-18.75 w-20 rounded-md">
               <p className="text-sm text-black dark:text-white">
-                {project.image}
+              <Image
+                src={`http://localhost:5000/uploads/${project.image}`}
+                width={60}
+                height={50}
+                alt="Product"
+              />
               </p>
               </div>
               <p className="text-sm text-black dark:text-white">
