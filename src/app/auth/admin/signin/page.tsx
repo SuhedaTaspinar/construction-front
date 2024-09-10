@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { saveToken } from '../../../../utils/storage';
 
 const SignIn: React.FC = () => {
   const router = useRouter();
@@ -28,6 +29,7 @@ const SignIn: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
+        saveToken(data.token)
         setSuccess("Giriş başarılı! Yönlendiriliyorsunuz...");
         setError("");
         // Kullanıcıyı dashboard sayfasına yönlendir

@@ -4,6 +4,8 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import React, { useState } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useRouter } from "next/navigation";
+import { getToken } from "../../../../utils/storage";
+
 
 const Service: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -23,8 +25,12 @@ const Service: React.FC = () => {
     formData.append("description", description);
 
     try {
+      const token = getToken();  
       const response = await fetch("http://localhost:5000/api/services/create-service", {
         method: "POST",
+        headers: {  
+          "Authorization": `Bearer ${token}`,
+        },
         body: formData,
       });
 

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useRouter } from "next/navigation";
+import { getToken } from "../../../../utils/storage";
 
 const Project: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
@@ -29,8 +30,12 @@ const Project: React.FC = () => {
     formData.append("description", description);
   
     try {
+      const token = getToken();  
       const response = await fetch("http://localhost:5000/api/projects/create-project", {
         method: "POST",
+        headers: {  
+          "Authorization": `Bearer ${token}`,
+        },
         body: formData,
       });
   

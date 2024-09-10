@@ -6,6 +6,8 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
 import Link from "next/link";
+import { getToken } from "../../../../utils/storage";
+
 
 const Contact: React.FC = () => {
   const [phone, setPhone] = useState("");
@@ -23,10 +25,12 @@ const Contact: React.FC = () => {
     e.preventDefault();
 
     try {
+      const token = getToken();  
       const response = await fetch("http://localhost:5000/api/contacts/create-contact", {
         method: "POST",
         headers: {  
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           phone: phone,

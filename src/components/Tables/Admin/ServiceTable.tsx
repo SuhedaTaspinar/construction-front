@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { getToken } from "../../../utils/storage"; 
 
 interface Service {
-  image: string; // Image URL olarak güncellendi
+  image: string; 
   type: string;
   description: string;
 }
@@ -19,10 +20,12 @@ const ServiceTable: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = getToken();
         const response = await fetch("http://localhost:5000/api/services/get-service", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         });
 

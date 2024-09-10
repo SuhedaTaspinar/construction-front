@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getToken } from "../../../utils/storage"; ////
 
-// Project türünü tanımladık
 interface Project {
   name: string;
   image: string;
@@ -14,27 +13,28 @@ interface Project {
 }
 
 const ProjectTable: React.FC = () => {
-  // Projeleri tutmak için state'e tür ekledik
-  const [projects, setProjects] = useState<Project[]>([]); 
+  const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
   const router = useRouter();
 
   useEffect(() => {
-    // Veri çekmek için async fonksiyon oluşturduk
     const fetchData = async () => {
       try {
+        const token = getToken();  /////
+
         const response = await fetch("http://localhost:5000/api/projects/get-project", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, ///////////
           },
         });
 
         const data = await response.json();
         if (response.ok) {
-          setProjects(data); // Gelen veriler projelere atanıyor
+          setProjects(data);
           setSuccess("Veriler başarıyla yüklendi");
           setError("");
         } else {
@@ -48,7 +48,7 @@ const ProjectTable: React.FC = () => {
     };
 
     fetchData();
-  }, []); // Sadece ilk render'da çalışacak
+  }, []);  // Sadece ilk render'da çalışacak
 
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -77,14 +77,14 @@ const ProjectTable: React.FC = () => {
           <div className="col-span-2 flex items-center justify-start">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-18.75 w-20 rounded-md">
-              <p className="text-sm text-black dark:text-white">
-              <Image
-                src={`http://localhost:5000/uploads/${project.image}`}
-                width={60}
-                height={50}
-                alt="Product"
-              />
-              </p>
+                <p className="text-sm text-black dark:text-white">
+                  <Image
+                    src={`http://localhost:5000/uploads/${project.image}`}
+                    width={60}
+                    height={50}
+                    alt="Product"
+                  />
+                </p>
               </div>
               <p className="text-sm text-black dark:text-white">
                 {project.name}
@@ -105,14 +105,6 @@ const ProjectTable: React.FC = () => {
             <p className="text-sm text-black dark:text-white">
               {project.price}
             </p>
-          </div>
-          <div>
-            <div className="col-span-4 items-center justify-end sm:flex">
-              {/* Buraya butonlarınızı ekleyebilirsiniz */}
-              <button className="hover:text-primary">
-                {/* SVG ikonlarınız */}
-              </button>
-            </div>
           </div>
         </div>
       ))}

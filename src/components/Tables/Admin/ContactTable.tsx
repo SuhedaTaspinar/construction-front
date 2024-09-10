@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { getToken } from "../../../utils/storage"; 
 
 interface Contact {
   phone: String;
@@ -22,10 +23,12 @@ const ContactTable: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = getToken();  /////
         const response = await fetch("http://localhost:5000/api/contacts/get-contact", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         });
 
