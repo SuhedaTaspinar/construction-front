@@ -25,20 +25,20 @@ const Contact: React.FC = () => {
     e.preventDefault();
 
     try {
-      const token = getToken();  
+      const token = getToken();
       const response = await fetch("http://localhost:5000/api/contacts/create-contact", {
         method: "POST",
-        headers: {  
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           phone: phone,
-          mail:mail,
-          instagram:instagram,
+          mail: mail,
+          instagram: instagram,
           twitter: twitter,
-          youtube:youtube,
-          address:address
+          youtube: youtube,
+          address: address
         }),
       });
 
@@ -148,14 +148,14 @@ const Contact: React.FC = () => {
                       placeholder="Adres giriniz."
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={address}
-                      onChange={(e) => setAddress(e.target.value)}                    
+                      onChange={(e) => setAddress(e.target.value)}
                     ></textarea>
                   </div>
                 </div>
 
-                <button 
-                type="submit"
-                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
                   İletişim Formunu Ekle
                 </button>
               </div>

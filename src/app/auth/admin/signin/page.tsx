@@ -34,7 +34,7 @@ const SignIn: React.FC = () => {
         setError("");
         // Kullanıcıyı dashboard sayfasına yönlendir
         setTimeout(() => {
-          router.push("/"); 
+          router.push("/dashboard/admin"); 
         }, 2000); // 2 saniye bekle
       } else {
         setError(data.message || "Giriş başarısız");
