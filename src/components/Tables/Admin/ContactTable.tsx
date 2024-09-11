@@ -2,19 +2,20 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getToken } from "../../../utils/storage"; 
+import { getToken } from "../../../utils/storage";
+import Swal from "sweetalert2";
 
 interface Contact {
-  phone: String;
-  mail: String;
-  instagram: String;
-  twitter: String;
-  youtube: String;
-  address: String;
+  _id: string;
+  phone: string;
+  mail: string;
+  instagram: string;
+  twitter: string;
+  youtube: string;
+  address: string;
 }
-
 const ContactTable: React.FC = () => {
-  const [contacts, setContact] = useState<Contact[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
@@ -34,7 +35,7 @@ const ContactTable: React.FC = () => {
 
         const data = await response.json();
         if (response.ok) {
-          setContact(data); 
+          setContacts(data);
           setSuccess("Veriler başarıyla yüklendi");
           setError("");
         } else {
@@ -50,6 +51,60 @@ const ContactTable: React.FC = () => {
     fetchData();
   }, []);
 
+  const deleteContact = async (id: string) => {
+    const token = getToken();
+    if (!token) {
+      setError("Geçersiz token");
+      return;
+    }
+
+    try {
+      const result = await Swal.fire({
+        title: 'Emin misiniz?',
+        text: 'Bu iletişimi silmek istediğinizden emin misiniz?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Evet',
+        cancelButtonText: 'Hayır'
+      });
+
+      if (result.isConfirmed) {
+        const response = await fetch(`http://localhost:5000/api/contacts/delete-contact/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          setContacts(contacts.filter(contacts => contacts._id !== id));
+          Swal.fire(
+            'Silindi!',
+            'İletişim başarıyla silindi.',
+            'success'
+          );
+        } else {
+          const data = await response.json();
+          setError(data.message);
+          Swal.fire(
+            'Hata!',
+            'İletişim silinirken bir hata oluştu.',
+            'error'
+          );
+        }
+      }
+    } catch (error) {
+      setError("Bir hata oluştu");
+      Swal.fire(
+        'Hata!',
+        'İletişim silinirken bir hata oluştu.',
+        'error'
+      );
+    }
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -79,29 +134,29 @@ const ContactTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {contacts.map((contacts, index) => (
+            {contacts.map((contact, index) => (
               <tr key={index}>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contacts.phone}
+                  {contact.phone}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contacts.mail}
+                  {contact.mail}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contacts.instagram}
+                  {contact.instagram}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contacts.twitter}
+                  {contact.twitter}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contacts.youtube}
+                  {contact.youtube}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {contacts.address}
+                  {contact.address}
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                    <button className="hover:text-primary">
+                    <button className="hover:text-primary" onClick={() => deleteContact(contact._id)}>
                       <svg
                         className="fill-current"
                         width="18"
@@ -121,6 +176,7 @@ const ContactTable: React.FC = () => {
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
     </div>

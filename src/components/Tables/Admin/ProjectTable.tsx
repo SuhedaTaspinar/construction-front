@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getToken } from "../../../utils/storage";
+import Swal from "sweetalert2";
 
 interface Project {
   _id: string;
@@ -53,6 +54,62 @@ const ProjectTable: React.FC = () => {
 
     fetchData();
   }, []);
+
+  const deleteProject = async (id: string) => {
+    const token = getToken();
+    if (!token) {
+      setError("Geçersiz token");
+      return;
+    }
+  
+    try {
+      const result = await Swal.fire({
+        title: 'Emin misiniz?',
+        text: 'Bu iletişimi silmek istediğinizden emin misiniz?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Evet',
+        cancelButtonText: 'Hayır'
+      });
+  
+      if (result.isConfirmed) {
+        const response = await fetch(`http://localhost:5000/api/projects/delete-project/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (response.ok) {
+          setProjects(projects.filter(project => project._id !== id));
+          Swal.fire(
+            'Silindi!',
+            'Proje başarıyla silindi.',
+            'success'
+          );
+        } else {
+          const errorData = await response.json();
+          setError(errorData.message || "Proje silinirken bir hata oluştu");
+          Swal.fire(
+            'Hata!',
+            errorData.message || "Proje silinirken bir hata oluştu",
+            'error'
+          );
+        }
+      }
+    } catch (error) {
+      setError("Bir hata oluştu: " + (error as Error).message);
+      Swal.fire(
+        'Hata!',
+        'İletişim silinirken bir hata oluştu.',
+        'error'
+      );
+    }
+  };
+  
 
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -124,6 +181,20 @@ const ProjectTable: React.FC = () => {
                   />
                 </svg>
               </button>
+              <button className="hover:text-primary mr-2" onClick={() => deleteProject(project._id)}>
+              <svg
+                className="fill-current"
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.7535 2.47502H11.5879V1.9969C11.5879 1.15315 10.9129 0.478149 10.0691 0.478149H7.90352C7.05977 0.478149 6.38477 1.15315 6.38477 1.9969V2.47502H4.21914C3.40352 2.47502 2.72852 3.15002 2.72852 3.96565V4.8094C2.72852 5.42815 3.09414 5.9344 3.62852 6.1594L4.07852 15.4688C4.13477 16.6219 5.09102 17.5219 6.24414 17.5219H11.7004C12.8535 17.5219 13.8098 16.6219 13.866 15.4688L14.3441 6.13127C14.8785 5.90627 15.2441 5.3719 15.2441 4.78127V3.93752C15.2441 3.15002 14.5691 2.47502 13.7535 2.47502ZM7.67852 1.9969C7.67852 1.85627 7.79102 1.74377 7.93164 1.74377H10.0973C10.2379 1.74377 10.3504 1.85627 10.3504 1.9969V2.47502H7.70664V1.9969H7.67852ZM4.02227 3.96565C4.02227 3.85315 4.10664 3.74065 4.24727 3.74065H13.7535C13.866 3.74065 13.9785 3.82502 13.9785 3.96565V4.8094C13.9785 4.9219 13.8941 5.0344 13.7535 5.0344H4.24727C4.13477 5.0344 4.02227 4.95002 4.02227 4.8094V3.96565ZM11.7285 16.2563H6.27227C5.79414 16.2563 5.40039 15.8907 5.40039 15.4688V5.85527H12.5935L12.1091 15.4688C12.1091 15.8907 11.7091 16.2563 11.7285 16.2563ZM14.2316 5.85527H3.74039L3.97539 4.31252H14.2373L14.2316 5.85527Z"
+                />
+              </svg>
+            </button>
             </div>
           </div>
         ))

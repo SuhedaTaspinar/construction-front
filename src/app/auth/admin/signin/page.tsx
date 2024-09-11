@@ -32,12 +32,12 @@ const SignIn: React.FC = () => {
         saveToken(data.token)
         setSuccess("Giriş başarılı! Yönlendiriliyorsunuz...");
         setError("");
-        // Kullanıcıyı dashboard sayfasına yönlendir
+        
         setTimeout(() => {
           router.push("/dashboard/admin"); 
-        }, 2000); // 2 saniye bekle
+        }, 1000); 
       } else {
-        setError(data.message || "Giriş başarısız");
+        setError("Giriş başarısız");
       }
     } catch (error) {
       setError("Bir hata oluştu");
