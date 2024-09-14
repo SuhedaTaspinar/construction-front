@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getToken } from "../../../utils/storage";
+import { getToken } from "@/utils/storage";
 import Swal from "sweetalert2";
 
 interface Contact {
@@ -24,12 +23,10 @@ const ContactTable: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = getToken();  /////
-        const response = await fetch("http://localhost:5000/api/contacts/get-contact", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/contacts/get-contact`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
           },
         });
 
@@ -71,7 +68,7 @@ const ContactTable: React.FC = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:5000/api/contacts/delete-contact/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/contacts/delete-contact/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

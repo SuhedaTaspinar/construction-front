@@ -22,17 +22,10 @@ const ServiceTable: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = getToken();
-        if (!token) {
-          setError("Geçersiz token");
-          return;
-        }
-
-        const response = await fetch("http://localhost:5000/api/services/get-service", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/services/get-service`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -74,7 +67,7 @@ const ServiceTable: React.FC = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://localhost:5000/api/services/delete-service/${id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/services/delete-service/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -132,7 +125,7 @@ const ServiceTable: React.FC = () => {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-18.75 w-20 rounded-md">
                 <Image
-                  src={`http://localhost:5000/uploads/${service.image}`}
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/uploads/${service.image}`}
                   width={60}
                   height={50}
                   alt="Product"

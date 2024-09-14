@@ -26,7 +26,7 @@ const Service: React.FC = () => {
 
     try {
       const token = getToken();  
-      const response = await fetch("http://localhost:5000/api/services/create-service", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/services/create-service`, {
         method: "POST",
         headers: {  
           "Authorization": `Bearer ${token}`,

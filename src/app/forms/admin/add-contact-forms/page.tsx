@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import SelectGroupOne from "@/components/SelectGroup/SelectGroupOne";
 import Link from "next/link";
 import { getToken } from "../../../../utils/storage";
 
@@ -26,7 +25,7 @@ const Contact: React.FC = () => {
 
     try {
       const token = getToken();
-      const response = await fetch("http://localhost:5000/api/contacts/create-contact", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/contacts/create-contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

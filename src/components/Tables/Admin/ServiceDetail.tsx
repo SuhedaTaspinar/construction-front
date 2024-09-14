@@ -27,18 +27,10 @@ const ServiceDetail: React.FC = () => {
       if (!serviceId) return; 
 
       try {
-        const token = getToken();
-        if (!token) {
-          setError("Geçersiz token");
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(`http://localhost:5000/api/services/get-service-by-id/${serviceId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/services/get-service-by-id/${serviceId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -75,7 +67,7 @@ const ServiceDetail: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="w-full">
             <Image
-              src={`http://localhost:5000/uploads/${service.image}`}
+              src={`${process.env.NEXT_PUBLIC_IMAGE_BASE_URL}/uploads/${service.image}`}
               alt={service.type} 
               width={500}
               height={400}

@@ -31,7 +31,7 @@ const Project: React.FC = () => {
   
     try {
       const token = getToken();  
-      const response = await fetch("http://localhost:5000/api/projects/create-project", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/create-project`, {
         method: "POST",
         headers: {  
           "Authorization": `Bearer ${token}`,
